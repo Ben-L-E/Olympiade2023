@@ -13,6 +13,8 @@ fig.suptitle(str(input()))
 SLOPE_SH_HIGH = 8.0
 SLOPE_SH_LOW = -8.0
 
+DO_ERROR_BARS = True
+
 #-------------------------------------
 #Requests as an input the file
 #to be used by the program
@@ -150,6 +152,9 @@ def uncert (flat,data_y,data_x,avg):
     data_x = data_x [index_start:index_end]
     data_y = data_y [index_start:index_end]
 
+    if len(data_x)<5:
+        DO_ERROR_BARS = False
+    
     dif_to_avg = []
     for i in data_y:
         dif_to_avg.append(abs(avg-i))
@@ -183,17 +188,23 @@ print ("slope", slope_y)
 stable_inter = find_stable(slope_y,slope_x)
 print ("Interval:",stable_inter)
 
+
 stable = avg (stable_inter,y,up)
 stable_speed = "Vitesse Stable est de environ "+str('{:06.3f}'.format(stable))+"rad/s"
 plt.annotate(stable_speed,xy=(stable_inter[0],y[0]))
 
+
+
+    
 uncertanty = uncert (stable_inter,y,up,stable)
 print (uncertanty)
 
 
 
+
 ax.plot(up,y,marker = ".")
-plt.errorbar(up, y, yerr=uncertanty, fmt=".")
+if DO_ERROR_BARS == True:
+    plt.errorbar(up, y, yerr=uncertanty, fmt=".")
 #ax.plot(avg_x,avg_y)
 #ax.plot(stable_inter,inter_y)
 #ax.plot(slope_x,slope_y)
