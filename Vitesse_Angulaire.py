@@ -1,6 +1,9 @@
 import math 
 import matplotlib.pyplot as plt
 
+
+print ("Choose the delay between the points (s)")
+DELAY = float(input())
 fig, ax = plt.subplots()
 print ("Choose the name of your graph")
 fig.suptitle(str(input()))
@@ -13,7 +16,6 @@ fig.suptitle(str(input()))
 SLOPE_SH_HIGH = 8.0
 SLOPE_SH_LOW = -8.0
 
-DO_ERROR_BARS = True
 
 #-------------------------------------
 #Requests as an input the file
@@ -72,7 +74,7 @@ def Find_threshold_passes(data):
             pass_threshold_up_time.append(time)
             last_time = time
         past_i = i
-        time = time + 0.002
+        time = time + DELAY
     return pass_threshold_up_time
         
 #-------------------------------------------------------------------------
@@ -141,7 +143,11 @@ def avg (flat,data_y,data_x):
     data_x = data_x [index_start:index_end]
     data_y = data_y [index_start:index_end]
 
-    avg = (sum(data_y)/len(data_y))
+   
+    if len(data_y) > 0:
+        avg = (sum(data_y)/len(data_y))
+    else:
+        avg = float ('nan')    
 
     return avg
 #---------------------------------------------------------------------
@@ -152,20 +158,20 @@ def uncert (flat,data_y,data_x,avg):
     data_x = data_x [index_start:index_end]
     data_y = data_y [index_start:index_end]
 
-    if len(data_x)<5:
-        DO_ERROR_BARS = False
-    
-    dif_to_avg = []
-    for i in data_y:
-        dif_to_avg.append(abs(avg-i))
-    return mean(dif_to_avg)
+    if avg != float ('nan'):
+        dif_to_avg = []
+        for i in data_y:
+            dif_to_avg.append(abs(avg-i))
+        return mean(dif_to_avg)
 
 
 
 
 def mean (list):
-    return (sum(list)/len(list))            
-
+    if len(list) != 0:
+        return (sum(list)/len(list))            
+    else:
+        return (float ('nan'))
 
 
 
@@ -203,8 +209,8 @@ print (uncertanty)
 
 
 ax.plot(up,y,marker = ".")
-if DO_ERROR_BARS == True:
-    plt.errorbar(up, y, yerr=uncertanty, fmt=".")
+
+plt.errorbar(up, y, yerr=uncertanty, fmt=".")
 #ax.plot(avg_x,avg_y)
 #ax.plot(stable_inter,inter_y)
 #ax.plot(slope_x,slope_y)
